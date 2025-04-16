@@ -1,15 +1,17 @@
 import React from "react";
 
-const EmissionsReport = () => {
-  const emissions = {
-    monthly: 1250,
-    yearly: 15000,
-    breakdown: {
-      electricity: 40,
-      transportation: 45,
-      waste: 15,
-    },
-  };
+const EmissionsReport = ({ emissionsData = {} }) => {
+  // Calculate monthly and yearly projections based on current calculation
+  const monthlyEmissions = (emissionsData.totalEmissions || 0) * 30; // Approximate monthly
+  const yearlyEmissions = monthlyEmissions * 12;
+
+  // Calculate breakdown percentages
+  const energyContribution = emissionsData.totalEmissions
+    ? ((emissionsData.energy * 0.5) / emissionsData.totalEmissions) * 100
+    : 0;
+  const fuelContribution = emissionsData.totalEmissions
+    ? ((emissionsData.fuel * 2.3) / emissionsData.totalEmissions) * 100
+    : 0;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-ecoLight px-4">
@@ -18,42 +20,59 @@ const EmissionsReport = () => {
           📊 Emissions Report
         </h2>
 
-        <div className="text-center text-ecoBrown mb-6">
-          <p className="text-lg">
-            <strong>Monthly Emissions:</strong>{" "}
-            <span className="text-ecoDark">{emissions.monthly} kg CO₂</span>
-          </p>
-          <p className="text-lg">
-            <strong>Yearly Emissions:</strong>{" "}
-            <span className="text-ecoDark">{emissions.yearly} kg CO₂</span>
-          </p>
-        </div>
+        {emissionsData.calculationDate ? (
+          <>
+            <div className="text-center text-ecoBrown mb-6">
+              <p className="text-sm mb-2">
+                Calculation Date:{" "}
+                {new Date(emissionsData.calculationDate).toLocaleDateString()}
+              </p>
+              <p className="text-lg">
+                <strong>Latest Calculation:</strong>{" "}
+                <span className="text-ecoDark">
+                  {emissionsData.totalEmissions.toFixed(2)} kg CO₂
+                </span>
+              </p>
+              <p className="text-lg">
+                <strong>Monthly Projection:</strong>{" "}
+                <span className="text-ecoDark">
+                  {monthlyEmissions.toFixed(2)} kg CO₂
+                </span>
+              </p>
+              <p className="text-lg">
+                <strong>Yearly Projection:</strong>{" "}
+                <span className="text-ecoDark">
+                  {yearlyEmissions.toFixed(2)} kg CO₂
+                </span>
+              </p>
+            </div>
 
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <h3 className="text-xl font-semibold text-ecoDark mb-2">
-            Breakdown by Category
-          </h3>
-          <ul className="space-y-2">
-            <li className="flex justify-between">
-              <span>⚡ Electricity</span>
-              <span className="font-semibold text-ecoGreen">
-                {emissions.breakdown.electricity}%
-              </span>
-            </li>
-            <li className="flex justify-between">
-              <span>🚗 Transportation</span>
-              <span className="font-semibold text-ecoGreen">
-                {emissions.breakdown.transportation}%
-              </span>
-            </li>
-            <li className="flex justify-between">
-              <span>🗑️ Waste</span>
-              <span className="font-semibold text-ecoGreen">
-                {emissions.breakdown.waste}%
-              </span>
-            </li>
-          </ul>
-        </div>
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <h3 className="text-xl font-semibold text-ecoDark mb-2">
+                Breakdown by Category
+              </h3>
+              <ul className="space-y-2">
+                <li className="flex justify-between">
+                  <span>⚡ Energy Usage ({emissionsData.energy} kWh)</span>
+                  <span className="font-semibold text-ecoGreen">
+                    {energyContribution.toFixed(1)}%
+                  </span>
+                </li>
+                <li className="flex justify-between">
+                  <span>🚗 Fuel Usage ({emissionsData.fuel} liters)</span>
+                  <span className="font-semibold text-ecoGreen">
+                    {fuelContribution.toFixed(1)}%
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </>
+        ) : (
+          <div className="text-center text-ecoBrown p-8">
+            <p>No calculation data available.</p>
+            <p>Please use the Carbon Calculator to generate a report.</p>
+          </div>
+        )}
       </div>
     </div>
   );

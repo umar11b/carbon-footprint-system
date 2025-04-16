@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import CarbonCalculator from "./components/CarbonCalculator";
 import EmissionsReport from "./components/EmissionsReport";
@@ -6,6 +6,13 @@ import Chatbot from "./components/Chatbot";
 import LogGoals from "./components/LogGoals";
 
 function App() {
+  const [emissionsData, setEmissionsData] = useState({
+    energy: 0,
+    fuel: 0,
+    totalEmissions: 0,
+    calculationDate: null,
+  });
+
   return (
     <Router>
       <div className="min-h-screen bg-ecoLight">
@@ -46,8 +53,14 @@ function App() {
 
         {/* 💻 Page Routes */}
         <Routes>
-          <Route path="/" element={<CarbonCalculator />} />
-          <Route path="/report" element={<EmissionsReport />} />
+          <Route
+            path="/"
+            element={<CarbonCalculator onCalculate={setEmissionsData} />}
+          />
+          <Route
+            path="/report"
+            element={<EmissionsReport emissionsData={emissionsData} />}
+          />
           <Route path="/chatbot" element={<Chatbot />} />
           <Route path="/goals" element={<LogGoals />} />
         </Routes>

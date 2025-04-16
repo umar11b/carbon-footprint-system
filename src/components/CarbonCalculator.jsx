@@ -1,13 +1,26 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const CarbonCalculator = () => {
+const CarbonCalculator = ({ onCalculate }) => {
   const [energy, setEnergy] = useState("");
   const [fuel, setFuel] = useState("");
   const [result, setResult] = useState(null);
+  const navigate = useNavigate();
 
   const calculateEmissions = () => {
     const emissions = parseFloat(energy) * 0.5 + parseFloat(fuel) * 2.3;
     setResult(emissions.toFixed(2));
+
+    // Save the calculation data and navigate to report
+    onCalculate({
+      energy: parseFloat(energy),
+      fuel: parseFloat(fuel),
+      totalEmissions: emissions,
+      calculationDate: new Date(),
+    });
+
+    // Navigate to the emissions report page
+    navigate("/report");
   };
 
   return (
